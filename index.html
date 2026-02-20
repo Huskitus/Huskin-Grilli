@@ -83,20 +83,37 @@
     padding-top: 3rem;
     opacity: 0;
     animation: fadeUp 1s ease forwards 0.1s;
+    position: relative;
+  }
+  .logo-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    cursor: pointer;
   }
   .logo-svg {
-    width: 180px;
-    height: 180px;
+    width: 220px;
+    height: 220px;
     filter: drop-shadow(0 0 20px rgba(201,74,26,0.5));
-    transition: transform 0.4s ease, filter 0.4s ease;
+    transition: filter 0.4s ease;
+    position: relative;
+    z-index: 2;
   }
-  .logo-svg:hover {
-    transform: scale(1.06) rotate(2deg);
-    filter: drop-shadow(0 0 32px rgba(232,169,58,0.7));
+  .logo-container:hover .logo-svg {
+    filter: drop-shadow(0 0 40px rgba(255,120,0,0.9));
   }
   .logo-svg svg {
     width: 100%;
     height: 100%;
+  }
+  /* Spark canvas sits on top of logo */
+  #sparkCanvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 220px;
+    height: 220px;
+    pointer-events: none;
+    z-index: 10;
   }
 
 </style>
@@ -106,6 +123,8 @@
 <div class="wrap">
 
     <div class="logo-wrap">
+    <div class="logo-container">
+    <canvas id="sparkCanvas"></canvas>
     <div class="logo-svg">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
   <defs>
@@ -610,5 +629,97 @@
     });
   }
 </script>
+
+<script>
+(function() {
+  const canvas = document.getElementById('sparkCanvas');
+  const ctx = canvas.getContext('2d');
+  const container = canvas.parentElement;
+  const W = 220, H = 220;
+  canvas.width = W;
+  canvas.height = H;
+
+  let active = false;
+  let sparks = [];
+  let animId = null;
+
+  // Grill area in logo coordinates (logo is 400x400 SVG scaled to 220px)
+  // Grill sits around y=298-323, x=130-270 in SVG coords
+  // Scale factor: 220/400 = 0.55
+  const scale = 0.55;
+  const grillX1 = 130 * scale;
+  const grillX2 = 270 * scale;
+  const grillY  = 305 * scale;
+
+  function randomBetween(a, b) { return a + Math.random() * (b - a); }
+
+  function createSpark() {
+    const x = randomBetween(grillX1 + 10, grillX2 - 10);
+    const y = grillY + randomBetween(-5, 5);
+    const angle = randomBetween(-Math.PI * 0.85, -Math.PI * 0.15); // upward
+    const speed = randomBetween(0.6, 2.2);
+    const size  = randomBetween(1.5, 4);
+    const life  = randomBetween(40, 100);
+    const hue   = randomBetween(10, 50); // orange to yellow
+    return { x, y, vx: Math.cos(angle) * speed * 0.5, vy: Math.sin(angle) * speed, size, life, maxLife: life, hue };
+  }
+
+  function spawnBurst() {
+    const count = Math.random() < 0.3 ? Math.floor(randomBetween(3, 7)) : Math.floor(randomBetween(1, 3));
+    for (let i = 0; i < count; i++) sparks.push(createSpark());
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+
+    if (active && Math.random() < 0.55) spawnBurst();
+
+    sparks = sparks.filter(s => s.life > 0);
+    for (const s of sparks) {
+      s.x  += s.vx;
+      s.y  += s.vy;
+      s.vy -= 0.04; // drift upward
+      s.vx += randomBetween(-0.06, 0.06); // jitter
+      s.life--;
+
+      const alpha = (s.life / s.maxLife);
+      const r = s.size * alpha;
+      if (r < 0.3) continue;
+
+      // Glow
+      const grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r * 3);
+      grad.addColorStop(0, `hsla(${s.hue}, 100%, 80%, ${alpha * 0.6})`);
+      grad.addColorStop(1, `hsla(${s.hue}, 100%, 50%, 0)`);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, r * 3, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Core
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${s.hue + 20}, 100%, 90%, ${alpha})`;
+      ctx.fill();
+    }
+
+    if (active || sparks.length > 0) {
+      animId = requestAnimationFrame(tick);
+    } else {
+      animId = null;
+    }
+  }
+
+  container.addEventListener('mouseenter', () => {
+    active = true;
+    if (!animId) animId = requestAnimationFrame(tick);
+  });
+
+  container.addEventListener('mouseleave', () => {
+    active = false;
+    // let remaining sparks finish
+  });
+})();
+</script>
+
 </body>
 </html>
