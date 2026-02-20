@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Huski Grill — Viikonlopun Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --smoke: #1a1410;
+    --ember: #c94a1a;
+    --gold: #e8a93a;
+    --cream: #f5ede0;
+    --ash: #7a6a58;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background-color: var(--smoke); color: var(--cream); font-family: 'Jost', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 20% 80%, rgba(201,74,26,0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(232,169,58,0.08) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+  .noise { position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); opacity: 0.04; pointer-events: none; z-index: 1; }
+  .wrap { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 0 2rem; }
+
+  header { text-align: center; padding: 5rem 0 3rem; }
+  .fire-line { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s; }
+  .fire-line::before, .fire-line::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--ember), transparent); max-width: 120px; }
+  .flame-icon { font-size: 1.6rem; animation: flicker 2s ease-in-out infinite; }
+  @keyframes flicker { 0%, 100% { transform: scale(1) rotate(-2deg); } 50% { transform: scale(1.1) rotate(2deg); } }
+  .brand { font-family: 'Playfair Display', serif; font-size: clamp(3.5rem, 10vw, 7rem); font-weight: 900; letter-spacing: -0.02em; line-height: 0.9; color: var(--cream); opacity: 0; animation: fadeUp 1s ease forwards 0.4s; }
+  .brand span { color: var(--ember); font-style: italic; }
+  .subtitle { font-weight: 300; letter-spacing: 0.35em; text-transform: uppercase; font-size: 0.8rem; color: var(--ash); margin-top: 1.2rem; opacity: 0; animation: fadeUp 0.8s ease forwards 0.6s; }
+  .weekend-badge { display: inline-block; margin-top: 2rem; padding: 0.5rem 2rem; border: 1px solid var(--gold); color: var(--gold); letter-spacing: 0.25em; text-transform: uppercase; font-size: 0.75rem; font-weight: 500; opacity: 0; animation: fadeUp 0.8s ease forwards 0.8s; }
+
+  .day-nav { display: flex; gap: 0; margin: 3rem 0 0; border-bottom: 1px solid rgba(255,255,255,0.1); opacity: 0; animation: fadeUp 0.8s ease forwards 1s; overflow-x: auto; scrollbar-width: none; }
+  .day-nav::-webkit-scrollbar { display: none; }
+  .day-tab { padding: 1rem 1.8rem; cursor: pointer; font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ash); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.2s, border-color 0.2s; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Jost', sans-serif; font-weight: 500; }
+  .day-tab:hover { color: var(--cream); }
+  .day-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .day-panel { display: none; }
+  .day-panel.active { display: block; }
+
+  .meal-block { margin: 3.5rem 0; opacity: 0; animation: fadeUp 0.6s ease forwards; }
+  .meal-block:nth-child(1) { animation-delay: 0.1s; }
+  .meal-block:nth-child(2) { animation-delay: 0.25s; }
+
+  .meal-time-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem; }
+  .meal-time-badge { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+  .meal-time-icon { font-size: 1.4rem; }
+  .meal-time-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); }
+  .meal-time-name { font-family: 'Playfair Display', serif; font-size: 2rem; font-style: italic; color: var(--cream); }
+  .meal-time-hours { font-size: 0.72rem; color: var(--ash); letter-spacing: 0.1em; margin-left: auto; white-space: nowrap; }
+  .meal-divider { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(232,169,58,0.3), transparent); }
+
+  .menu-section { margin: 2rem 0; }
+  .section-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: var(--gold); white-space: nowrap; opacity: 0.8; }
+  .section-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(232,169,58,0.2), transparent); }
+
+  .menu-item { padding: 1.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .menu-item:last-child { border-bottom: none; }
+  .item-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .item-desc { font-size: 0.82rem; color: var(--ash); font-weight: 300; line-height: 1.6; max-width: 580px; }
+  .item-tags { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+  .tag { font-size: 0.62rem; padding: 0.18rem 0.55rem; border: 1px solid rgba(201,74,26,0.4); color: var(--ember); letter-spacing: 0.1em; text-transform: uppercase; border-radius: 2px; }
+  .tag.v { border-color: rgba(80,180,80,0.4); color: #6dc46d; }
+  .tag.s { border-color: rgba(232,169,58,0.4); color: var(--gold); }
+
+  .special-item { background: linear-gradient(135deg, rgba(201,74,26,0.1), rgba(232,169,58,0.05)); border: 1px solid rgba(201,74,26,0.22); padding: 1.5rem; margin-bottom: 0.5rem; position: relative; overflow: hidden; }
+  .special-item::after { content: "CHEF'S SPECIAL"; position: absolute; top: 1rem; right: 1.2rem; font-size: 0.58rem; letter-spacing: 0.2em; color: var(--ember); font-weight: 500; }
+  .special-item .item-name { font-size: 1.25rem; color: var(--gold); }
+
+  .block-sep { text-align: center; color: rgba(201,74,26,0.3); font-size: 0.9rem; margin: 3rem 0; letter-spacing: 0.8em; }
+
+  footer { text-align: center; padding: 4rem 0 5rem; border-top: 1px solid rgba(255,255,255,0.07); margin-top: 3rem; }
+  .footer-flame { font-size: 1.8rem; margin-bottom: 1.2rem; animation: flicker 2.5s ease-in-out infinite; display: block; }
+  .footer-note { font-size: 0.73rem; color: var(--ash); letter-spacing: 0.1em; line-height: 2.2; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) { .meal-time-hours { display: none; } .day-tab { padding: 0.9rem 1.2rem; font-size: 0.7rem; } }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="wrap">
+
+  <header>
+    <div class="fire-line"><span class="flame-icon">🔥</span></div>
+    <h1 class="brand">Huski<br><span>Grill</span></h1>
+    <p class="subtitle">Pohjoisen maut · Avotuli · Sielu</p>
+    <div class="weekend-badge">Viikonlopun Menu · Pe–Su</div>
+  </header>
+
+  <nav class="day-nav">
+    <button class="day-tab active" onclick="showDay('pe')">Perjantai</button>
+    <button class="day-tab" onclick="showDay('la')">Lauantai</button>
+    <button class="day-tab" onclick="showDay('su')">Sunnuntai</button>
+  </nav>
+
+  <!-- PERJANTAI -->
+  <div class="day-panel active" id="panel-pe">
+    <div class="meal-block">
+      <div class="meal-time-header">
+        <div class="meal-time-badge">
+          <span class="meal-time-icon">🌙</span>
+          <span class="meal-time-label">Perjantai</span>
+        </div>
+        <div class="meal-divider"></div>
+        <span class="meal-time-name">Illallinen</span>
+        <span class="meal-time-hours">17:00 – 22:00</span>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Alkupalat</span><div class="section-line"></div></div>
+        <div class="menu-item special-item">
+          <div class="item-name">Savustettu Poronkäristys-Taco</div>
+          <div class="item-desc">Avotuella savustettu poro, lingonberry-crème fraîche, hapankaali, mustikka-sipulirelish · 2 kpl</div>
+          <div class="item-tags"><span class="tag">Savustettu</span><span class="tag">Paikalliset Raaka-aineet</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Loimulohi</div>
+          <div class="item-desc">Perinteinen loimulohi, muikku-tartare, piparjuuri, ruisleipä</div>
+          <div class="item-tags"><span class="tag">Kotimainen Kala</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattua Halloumia</div>
+          <div class="item-desc">Hunaja-timjami-kastike, paahdetut saksanpähkinät, tuore rakuuna</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Pääruoat</span><div class="section-line"></div></div>
+        <div class="menu-item special-item">
+          <div class="item-name">Dry-Aged Ribeye 300g</div>
+          <div class="item-desc">28 vrk kypsytetty naudan sisäfile, luuvoi, grilliyrtit, lihan oma jus · tarjoillaan medium rare</div>
+          <div class="item-tags"><span class="tag">Grillin Ylpeys</span><span class="tag s">Viikonloppu Erikois</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Savustettu Lampaanpotkafilee</div>
+          <div class="item-desc">6h low &amp; slow savustettu lammas, minttu-gremolaata, paahdettu valkosipulipyre, grillihiiltyneet kasvikset</div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattu Kuhafile</div>
+          <div class="item-desc">Tuore kotimainen kuha, sitruuna-kaprikastike, perunagratiini, grilliparsa</div>
+          <div class="item-tags"><span class="tag">Kotimainen Kala</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Portobello-Grilliburger</div>
+          <div class="item-desc">Suurikokoinen portobello, savutahna-aioli, brioche-sämpylä, suolakurkku-relish, parmesaanilastu</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Jälkiruoat</span><div class="section-line"></div></div>
+        <div class="menu-item">
+          <div class="item-name">Mustikka-Skyr Pannacotta</div>
+          <div class="item-desc">Pohjoinen mustikka, rapea kaura-crumble, timjamihunaja</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Suklaa-Lava Cake</div>
+          <div class="item-desc">Juokseva tummasuklaa, vaniljajäätelö, merisuola</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAUANTAI -->
+  <div class="day-panel" id="panel-la">
+    <div class="meal-block">
+      <div class="meal-time-header">
+        <div class="meal-time-badge">
+          <span class="meal-time-icon">☀️</span>
+          <span class="meal-time-label">Lauantai</span>
+        </div>
+        <div class="meal-divider"></div>
+        <span class="meal-time-name">Lounas</span>
+        <span class="meal-time-hours">11:00 – 15:00</span>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Keitot &amp; Salaatit</span><div class="section-line"></div></div>
+        <div class="menu-item special-item">
+          <div class="item-name">Päivän Grillikeitto</div>
+          <div class="item-desc">Savusipuli &amp; perunakermainen keitto, grillileipä, voikukkaöljy, hapankermainen lisuke</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span><span class="tag s">Päivän vaihtuva</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattu Kana-Salaatti</div>
+          <div class="item-desc">Marinoitu rintafilee, paahdettu porkkanapyre, fetajuusto, granaattiomena, siiderivinegretti</div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Halloumi-Vihreä Salaatti</div>
+          <div class="item-desc">Grillattua halloumia, sesongin lehdet, avokado, siemenet, sitruunakastike</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Lounasannokset</span><div class="section-line"></div></div>
+        <div class="menu-item">
+          <div class="item-name">Huskin Klassikko Burger</div>
+          <div class="item-desc">Tuore jauhelihapihvi, cheddar, bacon, karamellisoitu sipuli, salaatti, grilli-BBQ, grilliranskalaiset</div>
+          <div class="item-tags"><span class="tag s">Suosikki</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattua Lohta &amp; Perunagratiini</div>
+          <div class="item-desc">Päivän lohi, tilliyogurtti, kaprikastike, rucolapesto</div>
+          <div class="item-tags"><span class="tag">Kotimainen Kala</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattu Kasvispihvi</div>
+          <div class="item-desc">Linssipihvi, savupaprika-majoneesi, raikas tomaattirelish, grillileipä</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-sep">✦ ✦ ✦</div>
+
+    <div class="meal-block">
+      <div class="meal-time-header">
+        <div class="meal-time-badge">
+          <span class="meal-time-icon">🌙</span>
+          <span class="meal-time-label">Lauantai</span>
+        </div>
+        <div class="meal-divider"></div>
+        <span class="meal-time-name">Illallinen</span>
+        <span class="meal-time-hours">17:00 – 22:00</span>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Alkupalat</span><div class="section-line"></div></div>
+        <div class="menu-item special-item">
+          <div class="item-name">Savustettu Poronkäristys-Taco</div>
+          <div class="item-desc">Avotuella savustettu poro, lingonberry-crème fraîche, hapankaali, mustikka-sipulirelish · 2 kpl</div>
+          <div class="item-tags"><span class="tag">Savustettu</span><span class="tag">Paikalliset Raaka-aineet</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Loimulohi</div>
+          <div class="item-desc">Perinteinen loimulohi, muikku-tartare, piparjuuri, ruisleipä</div>
+          <div class="item-tags"><span class="tag">Kotimainen Kala</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattua Halloumia</div>
+          <div class="item-desc">Hunaja-timjami-kastike, paahdetut saksanpähkinät, tuore rakuuna</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Pääruoat</span><div class="section-line"></div></div>
+        <div class="menu-item special-item">
+          <div class="item-name">Dry-Aged Ribeye 300g</div>
+          <div class="item-desc">28 vrk kypsytetty naudan sisäfile, luuvoi, grilliyrtit, lihan oma jus · tarjoillaan medium rare</div>
+          <div class="item-tags"><span class="tag">Grillin Ylpeys</span><span class="tag s">Viikonloppu Erikois</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Savustettu Lampaanpotkafilee</div>
+          <div class="item-desc">6h low &amp; slow savustettu lammas, minttu-gremolaata, paahdettu valkosipulipyre, grillihiiltyneet kasvikset</div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattu Kuhafile</div>
+          <div class="item-desc">Tuore kotimainen kuha, sitruuna-kaprikastike, perunagratiini, grilliparsa</div>
+          <div class="item-tags"><span class="tag">Kotimainen Kala</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Portobello-Grilliburger</div>
+          <div class="item-desc">Suurikokoinen portobello, savutahna-aioli, brioche-sämpylä, suolakurkku-relish, parmesaanilastu</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Jälkiruoat</span><div class="section-line"></div></div>
+        <div class="menu-item">
+          <div class="item-name">Mustikka-Skyr Pannacotta</div>
+          <div class="item-desc">Pohjoinen mustikka, rapea kaura-crumble, timjamihunaja</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattua Ananasta</div>
+          <div class="item-desc">Kaneli-brownsokeri, kookos-sorbet, rum-karamelli</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Suklaa-Lava Cake</div>
+          <div class="item-desc">Juokseva tummasuklaa, vaniljajäätelö, merisuola</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUNNUNTAI -->
+  <div class="day-panel" id="panel-su">
+    <div class="meal-block">
+      <div class="meal-time-header">
+        <div class="meal-time-badge">
+          <span class="meal-time-icon">☀️</span>
+          <span class="meal-time-label">Sunnuntai</span>
+        </div>
+        <div class="meal-divider"></div>
+        <span class="meal-time-name">Lounas</span>
+        <span class="meal-time-hours">11:00 – 16:00</span>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Keitot &amp; Salaatit</span><div class="section-line"></div></div>
+        <div class="menu-item special-item">
+          <div class="item-name">Sunnuntain Lohikeitto</div>
+          <div class="item-desc">Savustettu lohikeitto, kermainen liemi, tilli, ruisleipä · klassinen pohjoinen resepti</div>
+          <div class="item-tags"><span class="tag">Kotimainen Kala</span><span class="tag s">Vain Sunnuntaisin</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Vihreä Salaatti</div>
+          <div class="item-desc">Sesongin salaatit, siiderivinegretti, paahdetut siemenet, fetajuusto</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Lounasannokset</span><div class="section-line"></div></div>
+        <div class="menu-item special-item">
+          <div class="item-name">Sunnuntai-Brunch Lautanen</div>
+          <div class="item-desc">Grillatut kasvikset, savulohi, scrambled eggs, rapeaa pekonia, ruisleipä, hapankerma</div>
+          <div class="item-tags"><span class="tag s">Vain Sunnuntaisin</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Huskin Klassikko Burger</div>
+          <div class="item-desc">Tuore jauhelihapihvi, cheddar, bacon, karamellisoitu sipuli, salaatti, grilli-BBQ, grilliranskalaiset</div>
+          <div class="item-tags"><span class="tag s">Suosikki</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattu Kanafilee &amp; Hiiltynyt Parsa</div>
+          <div class="item-desc">Sitruuna-yrtti-marinoitu kana, paahdettu pippurikastike, sitruunazeste, parmesaani</div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Linssicurry Grillillä</div>
+          <div class="item-desc">Savuiseksi grillattu linssicurry, kookosmaito, korianteri, naan-leipä</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+      <div class="menu-section">
+        <div class="section-header"><span class="section-title">Jälkiruoat</span><div class="section-line"></div></div>
+        <div class="menu-item">
+          <div class="item-name">Mustikka-Skyr Pannacotta</div>
+          <div class="item-desc">Pohjoinen mustikka, rapea kaura-crumble, timjamihunaja</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="item-name">Grillattua Ananasta</div>
+          <div class="item-desc">Kaneli-brownsokeri, kookos-sorbet, rum-karamelli</div>
+          <div class="item-tags"><span class="tag v">Kasvis</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="footer-flame">🔥</span>
+    <p class="footer-note">
+      Kaikki lihat kypsennetään avotuella<br>
+      Allergeenit ja erityisruokavaliot — kysy henkilökunnalta<br><br>
+      Huski Grill · Perjantai–Sunnuntai
+    </p>
+  </footer>
+
+</div>
+<script>
+  function showDay(day) {
+    document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('[onclick="showDay(\'' + day + '\')"]').classList.add('active');
+    const panel = document.getElementById('panel-' + day);
+    panel.classList.add('active');
+    panel.querySelectorAll('.meal-block').forEach(b => {
+      b.style.animation = 'none';
+      b.offsetHeight;
+      b.style.animation = '';
+    });
+  }
+</script>
+</body>
+</html>
