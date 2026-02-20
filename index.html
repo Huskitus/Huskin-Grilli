@@ -397,7 +397,8 @@
           <div class="item-desc">Tuore kotimainen kuha, sitruuna-kaprikastike, perunagratiini, grilliparsa</div>
           <div class="item-tags"><span class="tag">Kotimainen Kala</span></div>
         </div>
-        <div class="menu-item special-item" style="border-color: rgba(232,169,58,0.4); background: linear-gradient(135deg, rgba(232,169,58,0.1), rgba(201,74,26,0.08));">
+        <div class="menu-item special-item" style="border-color: rgba(232,169,58,0.4); background: linear-gradient(135deg, rgba(232,169,58,0.1), rgba(201,74,26,0.08));"
+          onmouseenter="playGeggo()" style="cursor:pointer">
           <div class="item-name" style="color: #e8a93a; font-size: 1.35rem;">🔥 Blokkaa Keijo</div>
           <div class="item-desc" style="margin-top: 0.4rem;">Kaksi 180g hickory-savustettua dry-aged pihviä · savucheddar joka valuu reunoilta · kärvennettty bacon · karamellisoitu punasipuli (45min) · piparjuurikastike · hapankaali · kaksinkertainen suolakurkku · dijon &amp; savustettu chiliketsuppi · luuvoilla grillattu brioche · "Hiljennysranskalaiset" savupaprikalla &amp; valkosipuliöljyllä · grilli-BBQ tummaolut-chilidippi</div>
           <div class="item-desc" style="margin-top: 0.5rem; font-style: italic; color: #c94a1a; font-size: 0.78rem;">Niin täynnä ettei jaksa enää kuunnella Keijoa</div>
@@ -618,7 +619,27 @@
   </footer>
 
 </div>
+<audio id="geggoAudio" src="geggo.mp3" preload="auto"></audio>
 <script>
+  // Unlock audio context on first interaction anywhere on page
+  let audioUnlocked = false;
+  document.addEventListener('click', function unlockAudio() {
+    if (!audioUnlocked) {
+      const audio = document.getElementById('geggoAudio');
+      audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
+      audioUnlocked = true;
+    }
+  }, { once: false });
+
+  function playGeggo() {
+    const audio = document.getElementById('geggoAudio');
+    audio.currentTime = 0;
+    const p = audio.play();
+    if (p !== undefined) {
+      p.catch(e => console.warn('Audio play failed:', e));
+    }
+  }
+
   function showDay(day) {
     document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
