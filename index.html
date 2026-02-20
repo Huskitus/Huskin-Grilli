@@ -126,7 +126,7 @@
     <div class="logo-container">
     <canvas id="sparkCanvas"></canvas>
     <div class="logo-svg">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
   <defs>
     <radialGradient id="bgGrad" cx="50%" cy="60%" r="50%">
       <stop offset="0%" stop-color="#2d1f0e"/>
@@ -338,8 +338,9 @@
 
 </svg>
 
-    </div>
-  </div>
+    </div> <!-- logo-svg -->
+    </div> <!-- logo-container -->
+  </div> <!-- logo-wrap -->
 
   <header>
     <div class="fire-line"><span class="flame-icon">🔥</span></div>
@@ -657,29 +658,29 @@
     const x = randomBetween(grillX1 + 10, grillX2 - 10);
     const y = grillY + randomBetween(-5, 5);
     const angle = randomBetween(-Math.PI * 0.85, -Math.PI * 0.15); // upward
-    const speed = randomBetween(0.6, 2.2);
-    const size  = randomBetween(1.5, 4);
-    const life  = randomBetween(40, 100);
+    const speed = randomBetween(0.15, 0.5);
+    const size  = randomBetween(1, 2.2);
+    const life  = randomBetween(90, 180);
     const hue   = randomBetween(10, 50); // orange to yellow
-    return { x, y, vx: Math.cos(angle) * speed * 0.5, vy: Math.sin(angle) * speed, size, life, maxLife: life, hue };
+    return { x, y, vx: Math.cos(angle) * speed * 0.3, vy: Math.sin(angle) * speed, size, life, maxLife: life, hue };
   }
 
   function spawnBurst() {
-    const count = Math.random() < 0.3 ? Math.floor(randomBetween(3, 7)) : Math.floor(randomBetween(1, 3));
+    const count = Math.floor(randomBetween(1, 2));
     for (let i = 0; i < count; i++) sparks.push(createSpark());
   }
 
   function tick() {
     ctx.clearRect(0, 0, W, H);
 
-    if (active && Math.random() < 0.55) spawnBurst();
+    if (active && Math.random() < 0.08) spawnBurst();
 
     sparks = sparks.filter(s => s.life > 0);
     for (const s of sparks) {
       s.x  += s.vx;
       s.y  += s.vy;
-      s.vy -= 0.04; // drift upward
-      s.vx += randomBetween(-0.06, 0.06); // jitter
+      s.vy -= 0.008; // drift upward slowly
+      s.vx += randomBetween(-0.015, 0.015); // gentle jitter
       s.life--;
 
       const alpha = (s.life / s.maxLife);
