@@ -19,7 +19,7 @@
   .noise { position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); opacity: 0.04; pointer-events: none; z-index: 1; }
   .wrap { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 0 2rem; }
 
-  header { text-align: center; padding: 5rem 0 3rem; }
+  header { text-align: center; padding: 1.5rem 0 3rem; }
   .fire-line { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s; }
   .fire-line::before, .fire-line::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--ember), transparent); max-width: 120px; }
   .flame-icon { font-size: 1.6rem; animation: flicker 2s ease-in-out infinite; }
@@ -76,11 +76,251 @@
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   @media (max-width: 600px) { .meal-time-hours { display: none; } .day-tab { padding: 0.9rem 1.2rem; font-size: 0.7rem; } }
+
+  .logo-wrap {
+    display: flex;
+    justify-content: center;
+    padding-top: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.1s;
+  }
+  .logo-svg {
+    width: 180px;
+    height: 180px;
+    filter: drop-shadow(0 0 20px rgba(201,74,26,0.5));
+    transition: transform 0.4s ease, filter 0.4s ease;
+  }
+  .logo-svg:hover {
+    transform: scale(1.06) rotate(2deg);
+    filter: drop-shadow(0 0 32px rgba(232,169,58,0.7));
+  }
+  .logo-svg svg {
+    width: 100%;
+    height: 100%;
+  }
+
 </style>
 </head>
 <body>
 <div class="noise"></div>
 <div class="wrap">
+
+    <div class="logo-wrap">
+    <div class="logo-svg">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="60%" r="50%">
+      <stop offset="0%" stop-color="#2d1f0e"/>
+      <stop offset="100%" stop-color="#0e0a06"/>
+    </radialGradient>
+    <radialGradient id="emberGlow" cx="50%" cy="100%" r="60%">
+      <stop offset="0%" stop-color="#ff6a00" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#c94a1a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="furGrad" cx="40%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#c8a882"/>
+      <stop offset="60%" stop-color="#a07850"/>
+      <stop offset="100%" stop-color="#7a5530"/>
+    </radialGradient>
+    <radialGradient id="darkFur" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3a2510"/>
+      <stop offset="100%" stop-color="#1e1208"/>
+    </radialGradient>
+    <linearGradient id="flameMain" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#c94a1a"/>
+      <stop offset="40%" stop-color="#ff7800"/>
+      <stop offset="70%" stop-color="#ffcc00"/>
+      <stop offset="100%" stop-color="#fff5cc" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="flameInner" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#ff9500"/>
+      <stop offset="60%" stop-color="#ffdd00"/>
+      <stop offset="100%" stop-color="#fffbcc"/>
+    </linearGradient>
+    <linearGradient id="grillMetal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#888"/>
+      <stop offset="50%" stop-color="#555"/>
+      <stop offset="100%" stop-color="#333"/>
+    </linearGradient>
+    <linearGradient id="sausageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c04020"/>
+      <stop offset="50%" stop-color="#a03018"/>
+      <stop offset="100%" stop-color="#7a2010"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="195" fill="url(#bgGrad)" stroke="#c94a1a" stroke-width="2.5"/>
+  <circle cx="200" cy="200" r="190" fill="none" stroke="#e8a93a" stroke-width="0.8" stroke-dasharray="6,4"/>
+
+  <!-- Ember glow from below -->
+  <ellipse cx="200" cy="340" rx="100" ry="40" fill="url(#emberGlow)"/>
+
+  <!-- ===== FLAMES ===== -->
+  <!-- Back flames -->
+  <ellipse cx="175" cy="295" rx="18" ry="32" fill="url(#flameMain)" opacity="0.7" filter="url(#glow)"/>
+  <ellipse cx="225" cy="290" rx="15" ry="28" fill="url(#flameMain)" opacity="0.7" filter="url(#glow)"/>
+
+  <!-- Main flames -->
+  <path d="M155 320 Q148 290 162 268 Q165 285 172 292 Q168 270 180 252 Q185 272 182 288 Q190 265 195 248 Q202 268 198 285 Q206 262 215 250 Q218 270 214 286 Q220 268 228 258 Q232 278 225 295 Q238 280 242 268 Q248 285 244 308 Q230 295 215 320 Z" fill="url(#flameMain)" filter="url(#glow)"/>
+  <!-- Inner flame -->
+  <path d="M170 318 Q165 295 175 278 Q179 290 183 300 Q188 278 195 262 Q200 280 198 295 Q206 272 213 265 Q215 282 210 298 Q220 280 228 275 Q230 292 224 312 Z" fill="url(#flameInner)" opacity="0.85"/>
+
+  <!-- ===== GRILL ===== -->
+  <!-- Grill base -->
+  <rect x="130" y="305" width="140" height="18" rx="4" fill="url(#grillMetal)" stroke="#666" stroke-width="1"/>
+  <!-- Grill bars -->
+  <rect x="130" y="298" width="140" height="12" rx="3" fill="#444" stroke="#666" stroke-width="1"/>
+  <line x1="148" y1="298" x2="148" y2="310" stroke="#777" stroke-width="2"/>
+  <line x1="165" y1="298" x2="165" y2="310" stroke="#777" stroke-width="2"/>
+  <line x1="182" y1="298" x2="182" y2="310" stroke="#777" stroke-width="2"/>
+  <line x1="200" y1="298" x2="200" y2="310" stroke="#777" stroke-width="2"/>
+  <line x1="218" y1="298" x2="218" y2="310" stroke="#777" stroke-width="2"/>
+  <line x1="235" y1="298" x2="235" y2="310" stroke="#777" stroke-width="2"/>
+  <line x1="252" y1="298" x2="252" y2="310" stroke="#777" stroke-width="2"/>
+  <!-- Grill glow -->
+  <rect x="130" y="298" width="140" height="5" rx="2" fill="#ff6a00" opacity="0.3"/>
+
+  <!-- ===== SAUSAGES ON GRILL ===== -->
+  <ellipse cx="160" cy="300" rx="24" ry="7" fill="url(#sausageGrad)" stroke="#7a2010" stroke-width="1"/>
+  <ellipse cx="160" cy="300" rx="24" ry="3" fill="#c04020" opacity="0.4"/>
+  <!-- Grill marks -->
+  <line x1="148" y1="297" x2="150" y2="303" stroke="#4a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="157" y1="296" x2="159" y2="304" stroke="#4a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="166" y1="297" x2="168" y2="303" stroke="#4a1008" stroke-width="1.5" stroke-linecap="round"/>
+
+  <ellipse cx="215" cy="299" rx="26" ry="7" fill="url(#sausageGrad)" stroke="#7a2010" stroke-width="1"/>
+  <ellipse cx="215" cy="299" rx="26" ry="3" fill="#c04020" opacity="0.4"/>
+  <line x1="202" y1="296" x2="204" y2="302" stroke="#4a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="212" y1="295" x2="214" y2="303" stroke="#4a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="222" y1="296" x2="224" y2="302" stroke="#4a1008" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- ===== HUSKY BODY ===== -->
+  <!-- Body / torso -->
+  <ellipse cx="200" cy="230" rx="62" ry="55" fill="url(#furGrad)"/>
+
+  <!-- Dark back/saddle markings -->
+  <ellipse cx="200" cy="210" rx="38" ry="32" fill="url(#darkFur)" opacity="0.85"/>
+
+  <!-- Chest / belly lighter patch -->
+  <ellipse cx="200" cy="245" rx="30" ry="28" fill="#e8d0a8"/>
+
+  <!-- Left arm holding spatula -->
+  <path d="M145 225 Q125 232 120 250 Q118 260 128 262 Q138 264 148 248 Q150 238 155 230 Z" fill="url(#furGrad)"/>
+  <!-- Dark arm top -->
+  <path d="M145 225 Q128 230 124 244 Q135 238 148 235 Z" fill="#3a2510" opacity="0.6"/>
+
+  <!-- Right arm raised up (holding BBQ fork) -->
+  <path d="M255 222 Q272 210 280 195 Q285 182 278 178 Q272 175 265 188 Q258 200 252 215 Z" fill="url(#furGrad)"/>
+  <path d="M255 222 Q270 212 276 198 Q268 204 258 215 Z" fill="#3a2510" opacity="0.6"/>
+
+  <!-- ===== SPATULA in left paw ===== -->
+  <g transform="translate(108, 248) rotate(-20)">
+    <!-- Handle -->
+    <rect x="0" y="-4" width="28" height="7" rx="3" fill="#888" stroke="#555" stroke-width="0.8"/>
+    <!-- Spatula head -->
+    <rect x="26" y="-7" width="22" height="13" rx="2" fill="#aaa" stroke="#666" stroke-width="0.8"/>
+    <!-- Holes in spatula -->
+    <circle cx="31" cy="-1" r="2" fill="#666"/>
+    <circle cx="38" cy="-1" r="2" fill="#666"/>
+    <circle cx="44" cy="-1" r="2" fill="#666"/>
+  </g>
+
+  <!-- ===== BBQ FORK in right paw ===== -->
+  <g transform="translate(278, 148) rotate(35)">
+    <rect x="0" y="-2.5" width="30" height="5" rx="2" fill="#888" stroke="#555" stroke-width="0.8"/>
+    <!-- Tines -->
+    <line x1="28" y1="-2" x2="36" y2="-8" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="28" y1="0" x2="36" y2="0" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="28" y1="2" x2="36" y2="8" stroke="#aaa" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ===== HEAD ===== -->
+  <!-- Head shape -->
+  <ellipse cx="200" cy="168" rx="52" ry="48" fill="url(#furGrad)"/>
+
+  <!-- Dark top of head / cap -->
+  <path d="M155 155 Q160 120 200 118 Q240 120 245 155 Q230 140 200 138 Q170 140 155 155 Z" fill="#2a1808"/>
+
+  <!-- Forehead white blaze -->
+  <path d="M192 135 Q200 125 208 135 Q204 148 200 155 Q196 148 192 135 Z" fill="#e8d0b0"/>
+
+  <!-- ===== EARS ===== -->
+  <!-- Left ear -->
+  <path d="M155 148 Q140 120 148 100 Q158 112 162 140 Z" fill="url(#furGrad)"/>
+  <path d="M155 148 Q143 122 150 105 Q157 115 160 140 Z" fill="#2a1808" opacity="0.8"/>
+  <!-- Right ear -->
+  <path d="M245 148 Q260 120 252 100 Q242 112 238 140 Z" fill="url(#furGrad)"/>
+  <path d="M245 148 Q257 122 250 105 Q243 115 240 140 Z" fill="#2a1808" opacity="0.8"/>
+
+  <!-- ===== FACE ===== -->
+  <!-- Eye area white patches -->
+  <ellipse cx="182" cy="162" rx="14" ry="12" fill="#e8d8c0"/>
+  <ellipse cx="218" cy="162" rx="14" ry="12" fill="#e8d8c0"/>
+
+  <!-- Eyes -->
+  <circle cx="182" cy="162" r="8" fill="#1a3a6a"/>
+  <circle cx="218" cy="162" r="8" fill="#1a6a3a"/>
+  <!-- Eye shine -->
+  <circle cx="185" cy="159" r="3" fill="white"/>
+  <circle cx="221" cy="159" r="3" fill="white"/>
+  <circle cx="185" cy="159" r="1.5" fill="#aaddff" opacity="0.8"/>
+  <circle cx="221" cy="159" r="1.5" fill="#aaffcc" opacity="0.8"/>
+  <!-- Pupils -->
+  <circle cx="183" cy="162" r="4" fill="#0a0a15"/>
+  <circle cx="219" cy="162" r="4" fill="#0a150a"/>
+
+  <!-- Muzzle / snout -->
+  <ellipse cx="200" cy="183" rx="22" ry="16" fill="#d8c0a0"/>
+  <!-- Nose -->
+  <ellipse cx="200" cy="174" rx="9" ry="6" fill="#1a1008"/>
+  <ellipse cx="198" cy="172" rx="3" ry="2" fill="#3a3028" opacity="0.6"/>
+  <!-- Smile / mouth -->
+  <path d="M188 184 Q200 196 212 184" fill="none" stroke="#8a6040" stroke-width="2" stroke-linecap="round"/>
+  <!-- Tongue -->
+  <path d="M194 190 Q200 200 206 190 Q204 196 200 198 Q196 196 194 190 Z" fill="#e05070"/>
+  <line x1="200" y1="190" x2="200" y2="198" stroke="#c04060" stroke-width="1"/>
+
+  <!-- Chef hat -->
+  <rect x="172" y="118" width="56" height="14" rx="4" fill="white" stroke="#ddd" stroke-width="1"/>
+  <rect x="180" y="95" width="40" height="26" rx="8" fill="white" stroke="#ddd" stroke-width="1"/>
+  <ellipse cx="200" cy="95" rx="20" ry="8" fill="white" stroke="#ddd" stroke-width="1"/>
+  <!-- Hat band detail -->
+  <rect x="172" y="122" width="56" height="4" rx="2" fill="#c94a1a" opacity="0.6"/>
+
+  <!-- ===== SMOKE WISPS ===== -->
+  <path d="M168 268 Q162 255 168 242 Q172 255 168 268 Z" fill="#888" opacity="0.15"/>
+  <path d="M232 265 Q238 252 233 239 Q229 252 232 265 Z" fill="#888" opacity="0.15"/>
+
+  <!-- ===== BADGE TEXT RING ===== -->
+  <path id="topArc" d="M55,200 A145,145 0 0,1 345,200" fill="none"/>
+  <path id="botArc" d="M70,230 A140,140 0 0,0 330,230" fill="none"/>
+
+  <text font-family="'Georgia', serif" font-size="22" font-weight="bold" letter-spacing="6" fill="#e8a93a" filter="url(#glow)">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">HUSKI GRILL</textPath>
+  </text>
+  <text font-family="'Georgia', serif" font-size="13" letter-spacing="4" fill="#c94a1a">
+    <textPath href="#botArc" startOffset="50%" text-anchor="middle">✦ POHJOISEN MAUT ✦</textPath>
+  </text>
+
+  <!-- Outer ring dots -->
+  <circle cx="200" cy="57" r="3" fill="#e8a93a" opacity="0.7"/>
+  <circle cx="200" cy="343" r="3" fill="#e8a93a" opacity="0.7"/>
+  <circle cx="57" cy="200" r="3" fill="#e8a93a" opacity="0.7"/>
+  <circle cx="343" cy="200" r="3" fill="#e8a93a" opacity="0.7"/>
+
+</svg>
+
+    </div>
+  </div>
 
   <header>
     <div class="fire-line"><span class="flame-icon">🔥</span></div>
